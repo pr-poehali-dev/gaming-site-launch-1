@@ -4,8 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Icon from "@/components/ui/icon";
+import { useState, useEffect } from "react";
 
 const Index = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const popularGames = [
     {
       title: "Cyberpunk Chronicles",
@@ -27,8 +30,37 @@ const Index = () => {
       rating: 9.0,
       image: "/img/6f5a3971-5a62-4f12-8af5-7d565a53aa15.jpg",
       description: "Захватывающий тактический шутер с реалистичной графикой"
+    },
+    {
+      title: "Speed Racing Ultimate",
+      genre: "Racing",
+      rating: 8.5,
+      image: "/img/3f232c61-6aca-41d8-93e7-e1fa911b811a.jpg",
+      description: "Адреналиновые гонки на футуристических трассах"
+    },
+    {
+      title: "Dark Manor Horror",
+      genre: "Horror",
+      rating: 8.9,
+      image: "/img/df32cce4-ead2-4be1-9d1d-2ccbcaa0cbc1.jpg",
+      description: "Мистический хоррор в заброшенном особняке"
     }
   ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % Math.ceil(popularGames.length / 3));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + Math.ceil(popularGames.length / 3)) % Math.ceil(popularGames.length / 3));
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const genres = [
     { name: "RPG", icon: "User", count: 147, color: "bg-gaming-orange" },
@@ -141,36 +173,79 @@ const Index = () => {
               Смотреть все
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {popularGames.map((game, index) => (
-              <Card key={index} className="bg-slate-800/50 border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300 animate-scale-in">
-                <div className="relative">
-                  <img 
-                    src={game.image} 
-                    alt={game.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <Badge className="absolute top-2 right-2 bg-gaming-blue text-white">
-                    {game.genre}
-                  </Badge>
-                  <div className="absolute bottom-2 left-2 flex items-center space-x-1 bg-black/70 px-2 py-1 rounded">
-                    <Icon name="Star" size={14} className="text-yellow-500" />
-                    <span className="text-white text-sm font-semibold">{game.rating}</span>
+          <div className="relative">
+            {/* Carousel Container */}
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {Array.from({ length: Math.ceil(popularGames.length / 3) }, (_, slideIndex) => (
+                  <div key={slideIndex} className="w-full flex-shrink-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {popularGames.slice(slideIndex * 3, slideIndex * 3 + 3).map((game, index) => (
+                        <Card key={slideIndex * 3 + index} className="bg-slate-800/50 border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300 animate-scale-in">
+                          <div className="relative">
+                            <img 
+                              src={game.image} 
+                              alt={game.title}
+                              className="w-full h-48 object-cover"
+                            />
+                            <Badge className="absolute top-2 right-2 bg-gaming-blue text-white">
+                              {game.genre}
+                            </Badge>
+                            <div className="absolute bottom-2 left-2 flex items-center space-x-1 bg-black/70 px-2 py-1 rounded">
+                              <Icon name="Star" size={14} className="text-yellow-500" />
+                              <span className="text-white text-sm font-semibold">{game.rating}</span>
+                            </div>
+                          </div>
+                          <CardHeader>
+                            <CardTitle className="text-white">{game.title}</CardTitle>
+                            <CardDescription className="text-gray-400">
+                              {game.description}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button className="w-full bg-gaming-orange hover:bg-gaming-orange/90">
+                              Подробнее
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-white">{game.title}</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    {game.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button className="w-full bg-gaming-orange hover:bg-gaming-orange/90">
-                    Подробнее
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <Button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gaming-charcoal/90 hover:bg-gaming-charcoal border-gaming-orange text-white p-3 rounded-full"
+              size="sm"
+            >
+              <Icon name="ChevronLeft" size={20} />
+            </Button>
+            <Button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gaming-charcoal/90 hover:bg-gaming-charcoal border-gaming-orange text-white p-3 rounded-full"
+              size="sm"
+            >
+              <Icon name="ChevronRight" size={20} />
+            </Button>
+
+            {/* Indicators */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {Array.from({ length: Math.ceil(popularGames.length / 3) }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index ? 'bg-gaming-orange' : 'bg-gray-600 hover:bg-gray-500'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
