@@ -44,6 +44,13 @@ const Index = () => {
       rating: 8.9,
       image: "/img/df32cce4-ead2-4be1-9d1d-2ccbcaa0cbc1.jpg",
       description: "Мистический хоррор в заброшенном особняке"
+    },
+    {
+      title: "Counter-Strike 2",
+      genre: "FPS",
+      rating: 9.5,
+      image: "/img/1cdfacc1-d5c8-4e85-b754-c0a044f3aadd.jpg",
+      description: "Легендарный тактический шутер нового поколения с улучшенной графикой"
     }
   ];
 
